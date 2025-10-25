@@ -23,45 +23,21 @@ const Home = () => {
         Bienvenido al Home
       </h1>
 
-      {rol === "superadmin" && (
-        <p className="mt-4 text-indigo-600 font-semibold">
-          Contenido para superadministradores.
-        </p>
-      )}
-
       {rol === "admin" && (
         <p className="mt-4 text-green-600 font-semibold">
           Panel exclusivo para administradores.
         </p>
       )}
 
-      {rol === "cliente" && (
+      {rol === "contador" && (
         <p className="mt-4 text-blue-500 font-semibold">
-          Contenido para clientes.
+          Contenido para contadores.
         </p>
       )}
 
-      {rol === "asesor" && (
-        <p className="mt-4 text-purple-500 font-semibold">
-          Herramientas de asesor.
-        </p>
-      )}
-
-      {rol === "auditor" && (
-        <p className="mt-4 text-orange-500 font-semibold">
-          Panel de auditoría.
-        </p>
-      )}
-
-      {rol === "cajero" && (
-        <p className="mt-4 text-pink-500 font-semibold">
-          Herramientas de caja.
-        </p>
-      )}
-
-      {rol === "jefe_negocios" && (
+      {rol === "jefe_contabilidad" && (
         <p className="mt-4 text-gray-500 font-semibold">
-          Herramientas de jefe negocios.
+          Herramientas de jefe de contabilidad.
         </p>
       )}
 

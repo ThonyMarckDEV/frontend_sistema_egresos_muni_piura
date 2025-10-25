@@ -13,8 +13,10 @@ const ProtectedRoute = ({ element }) => {
      switch (rol) {
       case 'admin':
         return <Navigate to="/admin" />;
-      case 'usuario':
-        return <Navigate to="/usuario" />;
+      case 'contador':
+        return <Navigate to="/contador" />;
+      case 'jefe_contabilidad':
+        return <Navigate to="/jefe_contabilidad" />;
       default:
         return element;
     }
