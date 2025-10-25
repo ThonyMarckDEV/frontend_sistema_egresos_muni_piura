@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { createContador } from 'services/contadorService'; // Ajusta la ruta
+import { createContador } from 'services/contadorService';
+import AlertMessage from 'components/Shared/Errors/AlertMessage';
 
-// Un componente reutilizable para los campos del formulario
 const InputField = ({ label, id, name, value, onChange, section, type = 'text', required = true }) => (
   <div className="mb-4">
     <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
@@ -13,14 +13,13 @@ const InputField = ({ label, id, name, value, onChange, section, type = 'text', 
       name={name}
       value={value}
       onChange={onChange}
-      data-section={section} // Clave para el handler anidado
+      data-section={section}
       required={required}
       className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
     />
   </div>
 );
 
-// Componente principal del formulario
 export const AgregarContador = () => {
   const initialState = {
     datos: {
@@ -42,15 +41,16 @@ export const AgregarContador = () => {
 
   const [formData, setFormData] = useState(initialState);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  
+  const [alertInfo, setAlertInfo] = useState({
+    type: null,
+    message: null,
+    details: []
+  });
 
-  /**
-   * Maneja los cambios en los inputs y actualiza el estado anidado.
-   */
   const handleChange = (e) => {
-    const { name, value, dataset, type } = e.target;
-    const { section } = dataset; // 'datos', 'contacto', o 'usuario'
+    const { name, value, dataset } = e.target;
+    const { section } = dataset;
 
     setFormData((prevData) => ({
       ...prevData,
@@ -67,29 +67,46 @@ export const AgregarContador = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-    setSuccess(null);
+    setAlertInfo({ type: null, message: null, details: [] });
 
     try {
       const response = await createContador(formData);
       
-      // Asumiendo que handleResponse devuelve el JSON parseado o lanza error
-      setSuccess(response.message || 'Contador creado exitosamente.');
-      setFormData(initialState); // Limpiar formulario
+      setAlertInfo({
+        type: 'success',
+        message: response.message || 'Contador creado exitosamente.',
+        details: []
+      });
+      setFormData(initialState);
+
     } catch (err) {
-      console.error(err);
+      console.error("Error recibido:", err);
+
       let errorMessage = 'Ocurrió un error al crear el contador.';
-      // Si el error tiene un objeto 'errors' (de validación)
-      if (err.errors) {
-        const firstError = Object.values(err.errors)[0][0];
-        errorMessage = `Error de validación: ${firstError}`;
+      let errorDetails = [];
+
+      if (err.details && typeof err.details === 'object') {
+        
+        errorMessage = err.message || 'Error de validación.';
+        
+        errorDetails = Object.values(err.details).flat();
+
       } else if (err.message) {
         errorMessage = err.message;
       }
-      setError(errorMessage);
+      setAlertInfo({
+        type: 'error',
+        message: errorMessage,
+        details: errorDetails 
+      });
+
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCloseAlert = () => {
+    setAlertInfo({ type: null, message: null, details: [] });
   };
 
   return (
@@ -99,6 +116,15 @@ export const AgregarContador = () => {
       </h2>
 
       <form onSubmit={handleSubmit}>
+        
+        {/* El componente AlertMessage ahora recibirá 'details' como array */}
+        <AlertMessage
+          type={alertInfo.type}
+          message={alertInfo.message}
+          details={alertInfo.details}
+          onClose={handleCloseAlert}
+        />
+
         {/* --- Sección de Datos Personales --- */}
         <section className="mb-6">
           <h3 className="text-lg font-medium text-gray-700 mb-4">Datos Personales</h3>
@@ -145,10 +171,6 @@ export const AgregarContador = () => {
             <InputField label="Contraseña" id="password" name="password" value={formData.usuario.password} onChange={handleChange} section="usuario" type="password" />
           </div>
         </section>
-
-        {/* --- Mensajes de estado --- */}
-        {success && <div className="mb-4 p-3 rounded-md bg-green-50 text-green-700">{success}</div>}
-        {error && <div className="mb-4 p-3 rounded-md bg-red-50 text-red-700">{error}</div>}
 
         {/* --- Botón de Envío --- */}
         <div className="mt-6">
