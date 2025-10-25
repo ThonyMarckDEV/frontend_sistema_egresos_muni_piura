@@ -25,10 +25,10 @@ const Sidebar = () => {
         link: '/admin/dashboard',
       },
       {
-        section: 'Usuarios',
+        section: 'Contadores',
         subs: [
-          { name: 'Listar Usuarios', link: '/admin/users/list' },
-          { name: 'Agregar Usuario', link: '/admin/users/add' },
+          { name: 'Listar Contadores', link: '/admin/listar-contadores' },
+          { name: 'Agregar Contador', link: '/admin/agregar-contador' },
         ],
       },
     ],
