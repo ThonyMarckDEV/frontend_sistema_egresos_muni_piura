@@ -29,7 +29,8 @@ import Home from 'ui/home/Home';
 
 // Utilities
 import ProtectedRouteHome from 'utilities/ProtectedRoutes/ProtectedRouteHome';
-import ProtectedRouteUsuario from 'utilities/ProtectedRoutes/ProtectedRouteUsuario';
+import ProtectedRouteContador from 'utilities/ProtectedRoutes/ProtectedRouteContador';
+import ProtectedRouteJefeContabilidad from 'utilities/ProtectedRoutes/ProtectedRouteJefeContabilidad';
 import ProtectedRouteAdmin from 'utilities/ProtectedRoutes/ProtectedRouteAdmin';
 
 
@@ -61,11 +62,11 @@ function AppContent() {
 
 
 
-      {/* RUTAS USUARIO */}
+      {/* RUTAS CONTADOR */}
       <Route
-        path="/usuario"
+        path="/contador"
         element={
-          <ProtectedRouteUsuario element={<SidebarLayout />} />
+          <ProtectedRouteContador element={<SidebarLayout />} />
         }
       >
         {/* Ruta Home (cuando solo pones /usuario) */}
@@ -75,6 +76,20 @@ function AppContent() {
 
       </Route>
 
+
+      {/* RUTAS JEFE CONTABILIDAD */}
+      <Route
+        path="/jefe-contabilidad"
+        element={
+          <ProtectedRouteJefeContabilidad element={<SidebarLayout />} />
+        }
+      >
+        {/* Ruta Home (cuando solo pones /usuario) */}
+        <Route index element={<Home />} />
+
+        {/* Aquí agregas más módulos */}
+
+      </Route>
 
 
 

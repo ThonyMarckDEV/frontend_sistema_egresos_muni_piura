@@ -19,110 +19,29 @@ const Sidebar = () => {
   };
 
   const menus = {
-    superadmin: [
-      {
-        section: 'Home',
-        link: '/superadmin',
-      },
-      {
-        section: 'Clientes',
-        link: '/superadmin/clientes',
-      },      
-      {
-        section: 'Empleados',
-        link: '/superadmin/empleados',
-      },
-    ],
     admin: [
       {
         section: 'Dashboard',
         link: '/admin/dashboard',
       },
       {
-        section: 'Users',
+        section: 'Usuarios',
         subs: [
-          { name: 'List Users', link: '/admin/users/list' },
-          { name: 'Add User', link: '/admin/users/add' },
-        ],
-      },
-      {
-        section: 'Settings',
-        subs: [
-          { name: 'General', link: '/admin/settings/general' },
-          { name: 'Security', link: '/admin/settings/security' },
+          { name: 'Listar Usuarios', link: '/admin/users/list' },
+          { name: 'Agregar Usuario', link: '/admin/users/add' },
         ],
       },
     ],
-    cliente: [
+    contador: [
       {
         section: 'Home',
-        link: '/cliente',
-      },
-      {
-        section: 'Solicitud Préstamos',
-        subs: [
-          { name: 'Solicitar', link: '/cliente/solicitar-prestamo' },
-          { name: 'Mis Solicitudes', link: '/cliente/mis-solicitudes' },
-        ],
-      },
-      {
-        section: 'Support',
-        link: '/cliente/support',
+        link: '/contador',
       },
     ],
-    asesor: [
+    jefe_contabilidad: [
       {
-        section: 'Dashboard',
-        link: '/asesor/dashboard',
-      },
-      {
-        section:'Evaluaciones',
-        subs:[
-          {name:'Evaluar Cliente' , link:'/asesor/evaluacion-cliente'},
-          {name:'Evaluaciones Enviadas' ,  link: '/asesor/evaluaciones-enviadas'}
-        ]
-      },
-    ],
-    auditor: [
-      {
-        section: 'Dashboard',
-        link: '/auditor/dashboard',
-      },
-      {
-        section: 'Reports',
-        link: '/auditor/reports',
-      },
-      {
-        section: 'Teams',
-        subs: [
-          { name: 'Team List', link: '/encargado/teams/list' },
-          { name: 'Assign Tasks', link: '/encargado/teams/tasks' },
-        ],
-      },
-    ],
-    cajero: [
-      {
-        section: 'Dashboard',
-        link: '/cajero/dashboard',
-      },
-      {
-        section: 'Reports',
-        link: '/cajero/reports',
-      },
-      {
-        section: 'Teams',
-        subs: [
-          { name: 'Team List', link: '/encargado/teams/list' },
-          { name: 'Assign Tasks', link: '/encargado/teams/tasks' },
-        ],
-      },
-    ],
-      jefe_negocios: [
-      {
-        section:'Evaluaciones',
-        subs:[
-          {name:'Evaluaciones Clientes' ,  link: '/jefe-negocios/evaluaciones-clientes'}
-        ]
+        section: 'Home',
+        link: '/jefe-contabilidad',
       },
     ],
   };
