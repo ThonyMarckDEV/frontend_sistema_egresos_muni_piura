@@ -21,3 +21,22 @@ export const createContador = async (contadorData) => {
 
   return handleResponse(response);
 };
+
+/**
+ * Obtiene una lista paginada de contadores desde el backend.
+ * @param {number} page - El número de página a solicitar.
+ * @returns {Promise<object>} - La respuesta paginada de Laravel.
+ */
+export const getContadores = async (page = 1) => {
+  
+  const response = await fetchWithAuth(`${API_BASE_URL}/api/contadores?page=${page}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  });
+
+  // Asumimos que handleResponse parsea el JSON y maneja errores
+  return handleResponse(response);
+};
