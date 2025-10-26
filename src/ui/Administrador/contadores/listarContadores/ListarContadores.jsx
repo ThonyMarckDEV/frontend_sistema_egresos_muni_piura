@@ -115,7 +115,7 @@ export const ListarContadores = () => {
 
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     {/* Asumimos una ruta de edición. Ajusta según tu router. */}
-                    <Link to={`/contadores/editar/${contador.id}`} className="text-indigo-600 hover:text-indigo-900">
+                    <Link to={`/admin/editar-contador/${contador.id}`} className="text-indigo-600 hover:text-indigo-900">
                       Editar
                     </Link>
                   </td>
