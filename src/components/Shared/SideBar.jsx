@@ -19,7 +19,7 @@ const menus = {
             section: 'Jefes de Contabilidad',
             subs: [
                 { name: 'Agregar Jefe', link: '/admin/agregar-jefe-contabilidad' },
-                { name: 'Listar Jefes', link: '/admin/listar-jefes' },
+                { name: 'Listar Jefes', link: '/admin/listar-jefes-contabilidad' },
             ],
         },
     ],

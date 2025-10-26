@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { getContadorById } from 'services/contadorService';
+// 1. Importar el servicio correcto
+import { getJefeContabilidadById } from 'services/jefeContabilidadService';
 
-// Pequeño componente interno para mostrar los campos de info
+// Componente interno para mostrar los campos (es genérico, se queda igual)
 const InfoField = ({ label, value }) => (
   <div className="mb-4">
     <label className="block text-sm font-medium text-gray-500 mb-1">
@@ -16,34 +17,38 @@ const InfoField = ({ label, value }) => (
   </div>
 );
 
-// Componente del Modal
-const ModalInfoContador = ({ isOpen, onClose, contadorId }) => {
-  const [contadorData, setContadorData] = useState(null);
+// 2. Cambiar nombre del componente y prop
+const ModalInfoJefeContabilidad = ({ isOpen, onClose, jefeId }) => {
+  // 3. Cambiar nombre de la variable de estado
+  const [jefeData, setJefeData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Solo busca datos si el modal está abierto y hay un ID
-    if (isOpen && contadorId) {
+    // 4. Usar jefeId
+    if (isOpen && jefeId) {
       const fetchData = async () => {
         setLoading(true);
         setError(null);
-        setContadorData(null);
+        // 5. Usar setJefeData
+        setJefeData(null);
         try {
-          // 1. Llamamos al servicio (que ya usa handleResponse)
-          const response = await getContadorById(contadorId);
+          // 6. Llamar al servicio correcto
+          const response = await getJefeContabilidadById(jefeId);
           
-          // 2. Extraemos la data formateada {datos, contacto, usuario}
+          // La estructura de 'response.data' es la misma {datos, contacto, usuario}
           const formattedData = response.data;
 
           if (!formattedData || !formattedData.datos || !formattedData.contacto) {
             throw new Error("La estructura de datos recibida no es la esperada.");
           }
           
-          setContadorData(formattedData);
+          // 7. Usar setJefeData
+          setJefeData(formattedData);
 
         } catch (err) {
-          console.error("Error al cargar datos del contador:", err);
+          // 8. Cambiar mensaje de error
+          console.error("Error al cargar datos del jefe de contabilidad:", err);
           setError(err.message || 'No se pudieron cargar los datos.');
         } finally {
           setLoading(false);
@@ -52,7 +57,7 @@ const ModalInfoContador = ({ isOpen, onClose, contadorId }) => {
       
       fetchData();
     }
-  }, [isOpen, contadorId]); // Se ejecuta cada vez que cambia el ID o el estado 'isOpen'
+  }, [isOpen, jefeId]); // 9. Actualizar dependencia
 
   // Si no está abierto, no renderiza nada
   if (!isOpen) {
@@ -73,7 +78,8 @@ const ModalInfoContador = ({ isOpen, onClose, contadorId }) => {
         {/* Encabezado del Modal */}
         <div className="flex justify-between items-center border-b pb-3 mb-4">
           <h3 className="text-xl font-semibold text-gray-800">
-            Información del Contador
+            {/* 10. Cambiar Título */}
+            Información del Jefe de Contabilidad
           </h3>
           <button 
             onClick={onClose}
@@ -90,26 +96,27 @@ const ModalInfoContador = ({ isOpen, onClose, contadorId }) => {
           
           {error && <div className="p-3 bg-red-50 text-red-800 rounded-md border border-red-200">{error}</div>}
           
-          {contadorData && (
+          {/* 11. Usar jefeData */}
+          {jefeData && (
             <div className="max-h-[70vh] overflow-y-auto pr-2">
               {/* Sección Datos Personales */}
               <h4 className="text-lg font-medium mb-3 text-gray-700">Datos Personales</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
-                <InfoField label="Nombre" value={contadorData.datos.nombre} />
-                <InfoField label="Apellido Paterno" value={contadorData.datos.apellidoPaterno} />
-                <InfoField label="Apellido Materno" value={contadorData.datos.apellidoMaterno} />
-                <InfoField label="DNI" value={contadorData.datos.dni} />
+                <InfoField label="Nombre" value={jefeData.datos.nombre} />
+                <InfoField label="Apellido Paterno" value={jefeData.datos.apellidoPaterno} />
+                <InfoField label="Apellido Materno" value={jefeData.datos.apellidoMaterno} />
+                <InfoField label="DNI" value={jefeData.datos.dni} />
                 <InfoField 
                   label="Sexo" 
-                  value={contadorData.datos.sexo === 'M' ? 'Masculino' : 'Femenino'} 
+                  value={jefeData.datos.sexo === 'M' ? 'Masculino' : 'Femenino'} 
                 />
               </div>
 
               {/* Sección Datos de Contacto */}
               <h4 className="text-lg font-medium mt-4 mb-3 text-gray-700">Datos de Contacto</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
-                <InfoField label="Teléfono Móvil" value={contadorData.contacto.telefonoMovil} />
-                <InfoField label="Correo Electrónico" value={contadorData.contacto.correo} />
+                <InfoField label="Teléfono Móvil" value={jefeData.contacto.telefonoMovil} />
+                <InfoField label="Correo Electrónico" value={jefeData.contacto.correo} />
               </div>
             </div>
           )}
@@ -129,4 +136,5 @@ const ModalInfoContador = ({ isOpen, onClose, contadorId }) => {
   );
 };
 
-export default ModalInfoContador;
+// 12. Cambiar el export default
+export default ModalInfoJefeContabilidad;

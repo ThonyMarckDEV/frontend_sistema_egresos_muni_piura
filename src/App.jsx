@@ -27,6 +27,8 @@ import ListarContadores from 'ui/Administrador/contadores/listarContadores/Lista
 import EditarContador from 'ui/Administrador/contadores/editarContador/EditarContador';
 
 import AgregarJefeContabilidad from 'ui/Administrador/jefesContabilidad/agregarJefeContabilidad/AgregarJefeContabilidad';
+import ListarJefesContabilidad from 'ui/Administrador/jefesContabilidad/listarJefeContabilidad/ListarJefesContabilidad';
+import EditarJefeContabilidad from 'ui/Administrador/jefesContabilidad/editarJefeContabilidad/EditarJefeContabilidad';
 
 // UIS USUARIO
 
@@ -67,8 +69,13 @@ function AppContent() {
         <Route path="editar-contador/:id" element={<EditarContador />} />
 
       {/*  RUTAS CRUD JEFE CONTABILIDAD*/}
-        {/* Ruta Agregar Contador */}
+        {/* Ruta Agregar Jefe Contabilidad */}
         <Route path="agregar-jefe-contabilidad" element={<AgregarJefeContabilidad />} />
+        {/* Ruta Listar Jefes Contabilidad */}
+        <Route path="listar-jefes-contabilidad" element={<ListarJefesContabilidad />} />
+        {/* Ruta Editar Jefe Contabilidad */}
+        <Route path="editar-jefe-contabilidad/:id" element={<EditarJefeContabilidad />} />
+
 
 
       </Route>
