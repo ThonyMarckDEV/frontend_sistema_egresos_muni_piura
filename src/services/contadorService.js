@@ -40,3 +40,37 @@ export const getContadores = async (page = 1) => {
   // Asumimos que handleResponse parsea el JSON y maneja errores
   return handleResponse(response);
 };
+
+/**
+ * Obtiene los datos de un contador específico por su ID.
+ * @param {string|number} id - El ID del contador.
+ */
+export const getContadorById = async (id) => {
+  const url = `${API_BASE_URL}/api/contador/${id}`;
+  const response = await fetchWithAuth(url, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+  return handleResponse(response); // Asume que handleResponse lanza error si !response.ok
+};
+
+/**
+ * Actualiza los datos de un contador existente.
+ * @param {string|number} id - El ID del contador a actualizar.
+ * @param {object} contadorData - El objeto anidado con los datos a actualizar.
+ */
+export const updateContador = async (id, contadorData) => {
+  const url = `${API_BASE_URL}/api/contador/${id}`;
+  
+  const response = await fetchWithAuth(url, {
+    method: 'PUT', // Usamos PUT como en la ruta de Laravel
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify(contadorData)
+  });
+  return handleResponse(response);
+};

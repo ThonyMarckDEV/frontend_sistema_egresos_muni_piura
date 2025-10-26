@@ -24,6 +24,7 @@ import Home from 'ui/home/Home';
 // UIS ADMIN
 import AgregarContador from 'ui/Administrador/contadores/agregarContador/AgregarContador';
 import ListarContadores from 'ui/Administrador/contadores/listarContadores/ListarContadores';
+import EditarContador from 'ui/Administrador/contadores/editarContador/EditarContador';
 
 
 // UIS USUARIO
@@ -60,6 +61,9 @@ function AppContent() {
 
         {/* Ruta Listar Contadores */}
         <Route path="listar-contadores" element={<ListarContadores />} />
+
+        {/* Ruta Editar Contador */}
+        <Route path="editar-contador/:id" element={<EditarContador />} />
 
       </Route>
 
