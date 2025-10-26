@@ -26,6 +26,7 @@ import AgregarContador from 'ui/Administrador/contadores/agregarContador/Agregar
 import ListarContadores from 'ui/Administrador/contadores/listarContadores/ListarContadores';
 import EditarContador from 'ui/Administrador/contadores/editarContador/EditarContador';
 
+import AgregarJefeContabilidad from 'ui/Administrador/jefesContabilidad/agregarJefeContabilidad/AgregarJefeContabilidad';
 
 // UIS USUARIO
 
@@ -35,6 +36,7 @@ import ProtectedRouteHome from 'utilities/ProtectedRoutes/ProtectedRouteHome';
 import ProtectedRouteContador from 'utilities/ProtectedRoutes/ProtectedRouteContador';
 import ProtectedRouteJefeContabilidad from 'utilities/ProtectedRoutes/ProtectedRouteJefeContabilidad';
 import ProtectedRouteAdmin from 'utilities/ProtectedRoutes/ProtectedRouteAdmin';
+
 
 
 function AppContent() {
@@ -56,14 +58,18 @@ function AppContent() {
         {/* Ruta Home (cuando solo pones /admin) */}
         <Route index element={<Home />} />
 
+      {/*  RUTAS CRUD CONTADOR*/}
         {/* Ruta Agregar Contador */}
         <Route path="agregar-contador" element={<AgregarContador />} />
-
         {/* Ruta Listar Contadores */}
         <Route path="listar-contadores" element={<ListarContadores />} />
-
         {/* Ruta Editar Contador */}
         <Route path="editar-contador/:id" element={<EditarContador />} />
+
+      {/*  RUTAS CRUD JEFE CONTABILIDAD*/}
+        {/* Ruta Agregar Contador */}
+        <Route path="agregar-jefe-contabilidad" element={<AgregarJefeContabilidad />} />
+
 
       </Route>
 

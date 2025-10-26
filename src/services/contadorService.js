@@ -46,14 +46,15 @@ export const getContadores = async (page = 1) => {
  * @param {string|number} id - El ID del contador.
  */
 export const getContadorById = async (id) => {
-  const url = `${API_BASE_URL}/api/contador/${id}`;
-  const response = await fetchWithAuth(url, {
+
+  const response = await fetchWithAuth(`${API_BASE_URL}/api/contador/${id}`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json'
     }
   });
-  return handleResponse(response); // Asume que handleResponse lanza error si !response.ok
+  return handleResponse(response);
+
 };
 
 /**
@@ -62,9 +63,8 @@ export const getContadorById = async (id) => {
  * @param {object} contadorData - El objeto anidado con los datos a actualizar.
  */
 export const updateContador = async (id, contadorData) => {
-  const url = `${API_BASE_URL}/api/contador/${id}`;
-  
-  const response = await fetchWithAuth(url, {
+
+  const response = await fetchWithAuth( `${API_BASE_URL}/api/contador/${id}`, {
     method: 'PUT', // Usamos PUT como en la ruta de Laravel
     headers: {
       'Content-Type': 'application/json',
@@ -73,4 +73,5 @@ export const updateContador = async (id, contadorData) => {
     body: JSON.stringify(contadorData)
   });
   return handleResponse(response);
+
 };
