@@ -3,6 +3,8 @@ import { getContadores } from 'services/contadorService';
 import Pagination from 'components/Shared/Pagination';
 import { Link } from 'react-router-dom';
 
+import ModalInfoContador from '../components/modals/ModalInfoContador'; 
+
 const EstadoBadge = ({ estado }) => {
   const classes = estado === 1
     ? 'bg-green-100 text-green-800'
@@ -21,11 +23,14 @@ export const ListarContadores = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Estado para manejar la información de paginación de Laravel
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
   });
+
+  // --- NUEVO ESTADO PARA EL MODAL ---
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedContadorId, setSelectedContadorId] = useState(null);
 
   // Hook para cargar los datos cuando cambia la página
   useEffect(() => {
@@ -33,16 +38,26 @@ export const ListarContadores = () => {
       setLoading(true);
       setError(null);
       try {
-        // Llamamos al servicio con el número de página
         const response = await getContadores(page);
         
-        setContadores(response.data); // 'data' es el array de contadores
-        
-        // Guardamos la metadata de paginación de Laravel
-        setPagination({
-          currentPage: response.current_page,
-          totalPages: response.last_page,
-        });
+        // Asumiendo que getContadores devuelve el objeto de paginación
+        // y NO está envuelto por handleResponse (como dijiste en un prompt anterior)
+        if (response.current_page !== undefined) {
+            setContadores(response.data); 
+            setPagination({
+              currentPage: response.current_page,
+              totalPages: response.last_page,
+            });
+        } else {
+            // Plan B por si acaso 'getContadores' SÍ usa handleResponse
+            // y devuelve { data: { data: [...], current_page: ... } }
+            console.warn("Respuesta inesperada de getContadores, intentando Plan B");
+            setContadores(response.data.data);
+            setPagination({
+              currentPage: response.data.current_page,
+              totalPages: response.data.last_page,
+            });
+        }
 
       } catch (err) {
         console.error("Error al cargar contadores:", err);
@@ -52,14 +67,23 @@ export const ListarContadores = () => {
       }
     };
 
-    // Llama a la función de fetch cuando 'pagination.currentPage' cambia
     fetchContadores(pagination.currentPage);
   }, [pagination.currentPage]);
 
-  // Handler para cuando el usuario hace clic en un número de página
+  // Handler para la paginación
   const handlePageChange = (page) => {
-    // Simplemente actualizamos la página actual, y el useEffect hará el resto
     setPagination(prev => ({ ...prev, currentPage: page }));
+  };
+
+  // --- NUEVOS HANDLERS PARA EL MODAL ---
+  const handleOpenModal = (id) => {
+    setSelectedContadorId(id);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedContadorId(null);
   };
 
   // Renderizado condicional (Cargando)
@@ -79,7 +103,6 @@ export const ListarContadores = () => {
         Lista de Contadores
       </h2>
       
-      {/* Contenedor de la tabla para overflow horizontal en móviles */}
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -101,7 +124,6 @@ export const ListarContadores = () => {
                   </td>
                   
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {/* Verificamos que 'datos' exista antes de mostrarlo */}
                     {contador.datos ? `${contador.datos.nombre} ${contador.datos.apellidoPaterno} ${contador.datos.apellidoMaterno}` : 'N/A'}
                   </td>
 
@@ -113,8 +135,14 @@ export const ListarContadores = () => {
                     <EstadoBadge estado={contador.estado} />
                   </td>
 
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    {/* Asumimos una ruta de edición. Ajusta según tu router. */}
+                  {/* --- SECCIÓN DE ACCIONES MODIFICADA --- */}
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
+                    <button
+                      onClick={() => handleOpenModal(contador.id)}
+                      className="text-blue-600 hover:text-blue-900"
+                    >
+                      Ver
+                    </button>
                     <Link to={`/admin/editar-contador/${contador.id}`} className="text-indigo-600 hover:text-indigo-900">
                       Editar
                     </Link>
@@ -123,7 +151,6 @@ export const ListarContadores = () => {
                 </tr>
               ))
             ) : (
-              // Mensaje si no hay contadores
               <tr>
                 <td colSpan="5" className="px-6 py-4 text-center text-sm text-gray-500">
                   No se encontraron contadores.
@@ -142,6 +169,13 @@ export const ListarContadores = () => {
           onPageChange={handlePageChange}
         />
       )}
+
+      {/* --- RENDERIZADO DEL MODAL --- */}
+      <ModalInfoContador
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        contadorId={selectedContadorId}
+      />
     </div>
   );
 };
