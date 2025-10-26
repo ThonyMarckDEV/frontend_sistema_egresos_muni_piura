@@ -8,7 +8,6 @@ import ConfirmModal from 'components/Shared/Modals/ConfirmModal';
 
 const menus = {
     admin: [
-        { section: 'Dashboard', link: '/admin/dashboard' },
         { 
             section: 'Contadores', 
             subs: [
