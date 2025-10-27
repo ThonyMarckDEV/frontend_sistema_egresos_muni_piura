@@ -25,9 +25,10 @@ const menus = {
     ],
     contador: [
         {
-            section: 'Prestamos',
+            section: 'Categorías',
             subs: [
-                { name: 'Pagar Prestamo', link: '/cliente/pagar-prestamo' },
+                { name: 'Agregar Categoría', link: '/contador/agregar-categoria' },
+                { name: 'Listar Categorías', link: '/contador/listar-categorias' },
             ],
         },
     ],

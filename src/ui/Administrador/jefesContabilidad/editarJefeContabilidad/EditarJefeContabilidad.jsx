@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 // 1. Importar los servicios correctos
 import { getJefeContabilidadById, updateJefeContabilidad } from 'services/jefeContabilidadService';
 import AlertMessage from 'components/Shared/Errors/AlertMessage';
@@ -31,7 +31,6 @@ const initialState = {
 // 2. Renombrar el componente
 export const EditarJefeContabilidad = () => {
   const { id } = useParams(); 
-  const navigate = useNavigate();
   
   const [formData, setFormData] = useState(initialState);
   const [loading, setLoading] = useState(true);
@@ -121,6 +120,10 @@ export const EditarJefeContabilidad = () => {
         message: response.message || 'Jefe de contabilidad actualizado exitosamente.',
         details: []
       });
+      
+      // Aquí podrías redirigir si quisieras, ej:
+      // setTimeout(() => navigate('/admin/jefes-contabilidad'), 2000);
+
     } catch (err) {
       console.error("Error al actualizar:", err);
       setAlertInfo({

@@ -30,7 +30,10 @@ import AgregarJefeContabilidad from 'ui/Administrador/jefesContabilidad/agregarJ
 import ListarJefesContabilidad from 'ui/Administrador/jefesContabilidad/listarJefeContabilidad/ListarJefesContabilidad';
 import EditarJefeContabilidad from 'ui/Administrador/jefesContabilidad/editarJefeContabilidad/EditarJefeContabilidad';
 
-// UIS USUARIO
+// UIS CONTADOR
+import AgregarCategoria from 'ui/Contador/categorias/agregarCategoria/AgregarCategoria';
+import ListarCategorias from 'ui/Contador/categorias/listarCategorias/ListarCategorias';
+import EditarCategoria from 'ui/Contador/categorias/editarCategoria/EditarCategoria';
 
 
 // Utilities
@@ -92,8 +95,13 @@ function AppContent() {
         {/* Ruta Home (cuando solo pones /usuario) */}
         <Route index element={<Home />} />
 
-        {/* Aquí agregas más módulos */}
-        
+      {/*  RUTAS CRUD CATEGORIAS */}
+        {/* Ruta Agregar Categoría */}
+        <Route path="agregar-categoria" element={<AgregarCategoria />} />
+        {/* Ruta Listar Categorías */}
+        <Route path="listar-categorias" element={<ListarCategorias />} />
+        {/* Ruta Editar Categoría */}
+        <Route path="editar-categoria/:id" element={<EditarCategoria />} />
 
       </Route>
 
