@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getEgresos } from 'services/egresoService'; 
+import { getEgresos } from 'services/egresoService';
 import Pagination from 'components/Shared/Pagination';
 import AlertMessage from 'components/Shared/Errors/AlertMessage';
-import ModalInfoEgreso from '../components/modals/ModalInfoEgreso'; 
+import ModalInfoEgreso from '../components/modals/ModalInfoEgreso'; // Ajusta la ruta si es necesario
 
 export const ListarEgresos = () => {
   const [egresos, setEgresos] = useState([]);
@@ -18,34 +18,37 @@ export const ListarEgresos = () => {
     const fetchEgresos = async (page) => {
       setLoading(true);
       setError(null);
-      setAlertInfo({ type: null, message: null, details: [] }); 
+      // Limpiamos alerta solo al cargar inicialmente o cambiar de página
+      if(alertInfo.type !== 'success') { // No limpiar si viene de una acción exitosa
+        setAlertInfo({ type: null, message: null, details: [] });
+      }
       try {
         const response = await getEgresos(page);
-        
-        // El backend ahora incluye 'cuenta_por_pagar' en cada egreso
+
         if (response.current_page !== undefined) {
-          setEgresos(response.data); 
+          setEgresos(response.data);
           setPagination({
             currentPage: response.current_page,
             totalPages: response.last_page,
           });
         } else {
           console.warn("Respuesta inesperada de getEgresos, intentando Plan B");
-          setEgresos(response.data.data); 
+          setEgresos(response.data?.data || []); // Asegura que sea array
           setPagination({
-            currentPage: response.data.current_page,
-            totalPages: response.data.last_page,
+            currentPage: response.data?.current_page || 1,
+            totalPages: response.data?.last_page || 1,
           });
         }
       } catch (err) {
-        console.error("Error al cargar egresos:", err); 
-        setError(err.message || 'No se pudo cargar la lista de egresos.'); 
+        console.error("Error al cargar egresos:", err);
+        setError(err.message || 'No se pudo cargar la lista de egresos.');
       } finally {
         setLoading(false);
       }
     };
-    fetchEgresos(pagination.currentPage); 
-  }, [pagination.currentPage]);
+    fetchEgresos(pagination.currentPage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagination.currentPage]); // Dependencia correcta
 
   const handlePageChange = (page) => {
     setPagination(prev => ({ ...prev, currentPage: page }));
@@ -61,7 +64,7 @@ export const ListarEgresos = () => {
     setIsModalOpen(false);
   };
 
-  if (loading) {
+  if (loading && egresos.length === 0) { // Muestra carga solo la primera vez
     return <div className="text-center p-8 text-gray-500">Cargando egresos...</div>;
   }
 
@@ -74,14 +77,14 @@ export const ListarEgresos = () => {
       <h2 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-4">
         Lista de Egresos
       </h2>
-      
+
       <AlertMessage
         type={alertInfo.type}
         message={alertInfo.message}
         details={alertInfo.details}
         onClose={() => setAlertInfo({ type: null, message: null, details: [] })}
       />
-      
+
       <div className="overflow-x-auto mt-4">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -120,24 +123,26 @@ export const ListarEgresos = () => {
                     >
                       Ver
                     </button>
-                    <Link to={`/contador/editar-egreso/${egreso.id}`} className="text-indigo-600 hover:text-indigo-900">
-                      Editar
-                    </Link>
 
-                    {/* --- CONDICIONAL PARA EL BOTÓN --- */}
-                    {/* Solo muestra el link si: */}
-                    {/* 1. El egreso TIENE proveedor */}
-                    {/* 2. El egreso NO tiene una cuenta_por_pagar asociada (es null) */}
+                    {/* Condicional para Editar */}
+                    {!egreso.cuenta_por_pagar && (
+                      <Link
+                        to={`/contador/editar-egreso/${egreso.id}`}
+                        className="text-indigo-600 hover:text-indigo-900"
+                      >
+                        Editar
+                      </Link>
+                    )}
+
+                    {/* Condicional para Registrar Cta. Pagar */}
                     {egreso.proveedor && !egreso.cuenta_por_pagar && (
-                      <Link 
-                        to={`/contador/egreso/registrar-cuenta-por-pagar/${egreso.id}`} 
+                      <Link
+                        to={`/contador/egreso/registrar-cuenta-por-pagar/${egreso.id}`}
                         className="text-red-600 hover:text-red-900"
                       >
                         Registrar Cta. Pagar
                       </Link>
                     )}
-                    {/* --- FIN DEL CONDICIONAL --- */}
-
                   </td>
                 </tr>
               ))
@@ -152,7 +157,7 @@ export const ListarEgresos = () => {
         </table>
       </div>
 
-      {egresos.length > 0 && ( 
+      {egresos.length > 0 && pagination.totalPages > 1 && (
         <Pagination
           currentPage={pagination.currentPage}
           totalPages={pagination.totalPages}

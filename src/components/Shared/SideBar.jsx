@@ -35,7 +35,7 @@ const menus = {
             section: 'Egresos',
             subs: [
                 { name: 'Agregar Egreso', link: '/contador/agregar-egreso' },
-                { name: 'Listar Egresos', link: '/contador/listar-egreso' },
+                { name: 'Listar Egresos', link: '/contador/listar-egresos' },
             ],
         },
         {

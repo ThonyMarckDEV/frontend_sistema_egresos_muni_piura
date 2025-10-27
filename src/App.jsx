@@ -119,7 +119,7 @@ function AppContent() {
         {/* Ruta Agregar Egreso */}
         <Route path="agregar-egreso" element={<AgregarEgreso />} />
         {/* Ruta Listar Egresos */}
-        <Route path="listar-egreso" element={<ListarEgresos />} />
+        <Route path="listar-egresos" element={<ListarEgresos />} />
         {/* Ruta Editar Egreso */}
         <Route path="editar-egreso/:id" element={<EditarEgreso />} />
 
