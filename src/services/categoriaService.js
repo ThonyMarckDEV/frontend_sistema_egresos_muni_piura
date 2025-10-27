@@ -39,15 +39,15 @@ export const getCategorias = async (page = 1) => {
  * @param {string|number} id - El ID de la categoría.
  */
 export const getCategoriaById = async (id) => {
-  // Ruta: /api/categoria/{id}
-  const url = `${API_BASE_URL}/api/categoria/${id}`;
-  const response = await fetchWithAuth(url, {
+
+  const response = await fetchWithAuth(`${API_BASE_URL}/api/categoria/${id}`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json'
     }
   });
   return handleResponse(response);
+  
 };
 
 /**
@@ -56,10 +56,8 @@ export const getCategoriaById = async (id) => {
  * @param {object} categoriaData - Objeto con { nombre, estado }
  */
 export const updateCategoria = async (id, categoriaData) => {
-  // Ruta: /api/categoria/{id}
-  const url = `${API_BASE_URL}/api/categoria/${id}`;
-  
-  const response = await fetchWithAuth(url, {
+
+  const response = await fetchWithAuth(`${API_BASE_URL}/api/categoria/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -68,21 +66,5 @@ export const updateCategoria = async (id, categoriaData) => {
     body: JSON.stringify(categoriaData)
   });
   return handleResponse(response);
-};
 
-/**
- * Elimina una categoría.
- * @param {string|number} id - El ID de la categoría.
- */
-export const deleteCategoria = async (id) => {
-  // Ruta: /api/categoria/{id}
-  const url = `${API_BASE_URL}/api/categoria/${id}`;
-  
-  const response = await fetchWithAuth(url, {
-    method: 'DELETE',
-    headers: {
-      'Accept': 'application/json'
-    }
-  });
-  return handleResponse(response);
 };

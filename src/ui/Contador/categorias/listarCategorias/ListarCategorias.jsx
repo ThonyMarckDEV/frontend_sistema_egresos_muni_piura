@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 // 1. Importar servicios de categoria
-import { getCategorias, deleteCategoria } from 'services/categoriaService'; 
+import { getCategorias } from 'services/categoriaService'; 
 import Pagination from 'components/Shared/Pagination';
-import AlertMessage from 'components/Shared/Errors/AlertMessage'; // Para los mensajes de eliminación
+import AlertMessage from 'components/Shared/Errors/AlertMessage';
 
 // El componente EstadoBadge es reutilizable
 const EstadoBadge = ({ estado }) => {
@@ -28,8 +28,6 @@ export const ListarCategorias = () => {
     totalPages: 1,
   });
 
-  // Estado para forzar la recarga de datos después de eliminar
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
   // Estado para mensajes de éxito/error al eliminar
   const [alertInfo, setAlertInfo] = useState({ type: null, message: null, details: [] });
 
@@ -68,34 +66,10 @@ export const ListarCategorias = () => {
     };
 
     fetchCategorias(pagination.currentPage);
-  }, [pagination.currentPage, refreshTrigger]); // Se refresca si cambia la página O si forzamos el refresh
+  }, [pagination.currentPage]);
 
   const handlePageChange = (page) => {
     setPagination(prev => ({ ...prev, currentPage: page }));
-  };
-
-  // 3. NUEVO: Handler para eliminar
-  const handleDelete = async (id) => {
-    if (!window.confirm('¿Estás seguro de que deseas eliminar esta categoría?')) {
-      return;
-    }
-
-    try {
-      const response = await deleteCategoria(id);
-      setAlertInfo({
-        type: 'success',
-        message: response.message || 'Categoría eliminada exitosamente.',
-      });
-      // Forzamos el refresh de los datos
-      setRefreshTrigger(prev => prev + 1); 
-    } catch (err) {
-      console.error("Error al eliminar categoría:", err);
-      setAlertInfo({
-        type: 'error',
-        message: err.message,
-        details: err.details || []
-      });
-    }
   };
 
 
@@ -150,13 +124,6 @@ export const ListarCategorias = () => {
                     <Link to={`/contador/editar-categoria/${categoria.id}`} className="text-indigo-600 hover:text-indigo-900">
                       Editar
                     </Link>
-                    <button
-                      onClick={() => handleDelete(categoria.id)}
-                      className="text-red-600 hover:text-red-900"
-                      disabled={loading} // Deshabilitar si se está cargando la lista
-                    >
-                      Eliminar
-                    </button>
                   </td>
 
                 </tr>
@@ -180,7 +147,6 @@ export const ListarCategorias = () => {
         />
       )}
 
-      {/* 7. Modal eliminado */}
     </div>
   );
 };
