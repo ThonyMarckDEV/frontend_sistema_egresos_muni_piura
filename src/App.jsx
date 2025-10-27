@@ -39,7 +39,7 @@ import AgregarEgreso from 'ui/Contador/egresos/agregarEgreso/AgregarEgreso';
 import ListarEgresos from 'ui/Contador/egresos/listarEgresos/ListarEgresos';
 import EditarEgreso from 'ui/Contador/egresos/editarEgreso/EditarEgreso';
 
-import AgregarCuentaPorPagar from 'ui/Contador/cuentasporpagar/agregarCuentaPorPagar/AgregarCuentaPorPagar';
+import RegistrarCuentaPorPagar from 'ui/Contador/cuentasporpagar/registrarCuentaPorPagar/RegistrarCuentaPorPagar';
 import ListarCuentasPorPagar from 'ui/Contador/cuentasporpagar/listarCuentasPorPagar/ListarCuentasPorPagar';
 
 // UIS JEFE CONTABILIDAD
@@ -124,8 +124,8 @@ function AppContent() {
         <Route path="editar-egreso/:id" element={<EditarEgreso />} />
 
       {/*  RUTAS CRUD CUENTAS POR PAGAR */}
-        {/* Ruta Agregar Cuenta por Pagar */}
-        <Route path="egreso/registrar-cuenta-por-pagar/:id" element={<AgregarCuentaPorPagar />} />
+        {/* Ruta Registrar Cuenta por Pagar */}
+        <Route path="egreso/registrar-cuenta-por-pagar/:id" element={<RegistrarCuentaPorPagar />} />
         {/* Ruta Listar Cuentas por Pagar */}
         <Route path="listar-cuentas-por-pagar" element={<ListarCuentasPorPagar />} />
 

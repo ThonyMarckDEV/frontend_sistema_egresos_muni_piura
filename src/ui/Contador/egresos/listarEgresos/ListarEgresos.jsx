@@ -1,42 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-// 1. Importar servicios de egreso
 import { getEgresos } from 'services/egresoService'; 
 import Pagination from 'components/Shared/Pagination';
 import AlertMessage from 'components/Shared/Errors/AlertMessage';
-
-// --- NUEVA IMPORTACIÓN ---
-// Importa el modal para Egresos (que crearemos después)
 import ModalInfoEgreso from '../components/modals/ModalInfoEgreso'; 
 
-// 2. Nombre del componente
 export const ListarEgresos = () => {
-  // 3. Estado adaptado
   const [egresos, setEgresos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    totalPages: 1,
-  });
-
+  const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 1 });
   const [alertInfo, setAlertInfo] = useState({ type: null, message: null, details: [] });
-
-  // --- Estados para el Modal ---
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEgresoId, setSelectedEgresoId] = useState(null);
 
   useEffect(() => {
-    // 4. Nombre de función adaptado
     const fetchEgresos = async (page) => {
       setLoading(true);
       setError(null);
       setAlertInfo({ type: null, message: null, details: [] }); 
       try {
-        // 5. Llamar al servicio correcto
         const response = await getEgresos(page);
         
+        // El backend ahora incluye 'cuenta_por_pagar' en cada egreso
         if (response.current_page !== undefined) {
           setEgresos(response.data); 
           setPagination({
@@ -58,7 +44,6 @@ export const ListarEgresos = () => {
         setLoading(false);
       }
     };
-
     fetchEgresos(pagination.currentPage); 
   }, [pagination.currentPage]);
 
@@ -66,7 +51,6 @@ export const ListarEgresos = () => {
     setPagination(prev => ({ ...prev, currentPage: page }));
   };
 
-  // --- Handlers para el Modal ---
   const handleOpenModal = (id) => {
     setSelectedEgresoId(id);
     setIsModalOpen(true);
@@ -102,7 +86,6 @@ export const ListarEgresos = () => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              {/* 7. Cabeceras adaptadas para Egreso */}
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoría</th>
@@ -112,35 +95,24 @@ export const ListarEgresos = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {/* 8. Mapear sobre 'egresos' */}
             {egresos.length > 0 ? (
               egresos.map((egreso) => (
                 <tr key={egreso.id}>
-
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {egreso.id ? egreso.id : 'N/A'}
+                    {egreso.id}
                   </td>
-
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {/* Formato de moneda (simple) */}
                     S/ {parseFloat(egreso.monto).toFixed(2)}
                   </td>
-                  
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {/* El 'with' del controller nos da acceso a 'categoria' */}
                     {egreso.categoria ? egreso.categoria.nombre : 'N/A'}
                   </td>
-                  
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {egreso.proveedor ? egreso.proveedor.nombre : 'N/A'}
                   </td>
-
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {/* Formato de fecha */}
                     {new Date(egreso.created_at).toLocaleDateString()}
                   </td>
-
-                  {/* 9. Acciones adaptadas */}
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
                     <button
                       onClick={() => handleOpenModal(egreso.id)}
@@ -151,17 +123,27 @@ export const ListarEgresos = () => {
                     <Link to={`/contador/editar-egreso/${egreso.id}`} className="text-indigo-600 hover:text-indigo-900">
                       Editar
                     </Link>
-                    <Link to={`/contador/egreso/registrar-cuenta-por-pagar/${egreso.id}`} className="text-red-600 hover:text-red-900">
-                      Registrar Cuenta por Pagar
-                    </Link>
-                  </td>
 
+                    {/* --- CONDICIONAL PARA EL BOTÓN --- */}
+                    {/* Solo muestra el link si: */}
+                    {/* 1. El egreso TIENE proveedor */}
+                    {/* 2. El egreso NO tiene una cuenta_por_pagar asociada (es null) */}
+                    {egreso.proveedor && !egreso.cuenta_por_pagar && (
+                      <Link 
+                        to={`/contador/egreso/registrar-cuenta-por-pagar/${egreso.id}`} 
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        Registrar Cta. Pagar
+                      </Link>
+                    )}
+                    {/* --- FIN DEL CONDICIONAL --- */}
+
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                {/* 10. Colspan adaptado (5 columnas) */}
-                <td colSpan="5" className="px-6 py-4 text-center text-sm text-gray-500">
+                <td colSpan="6" className="px-6 py-4 text-center text-sm text-gray-500">
                   No se encontraron egresos.
                 </td>
               </tr>
@@ -178,13 +160,11 @@ export const ListarEgresos = () => {
         />
       )}
 
-      {/* --- Renderizar el Modal --- */}
       <ModalInfoEgreso
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         egresoId={selectedEgresoId}
       />
-
     </div>
   );
 };
