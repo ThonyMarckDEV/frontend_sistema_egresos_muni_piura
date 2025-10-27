@@ -35,6 +35,11 @@ import AgregarCategoria from 'ui/Contador/categorias/agregarCategoria/AgregarCat
 import ListarCategorias from 'ui/Contador/categorias/listarCategorias/ListarCategorias';
 import EditarCategoria from 'ui/Contador/categorias/editarCategoria/EditarCategoria';
 
+// UIS JEFE CONTABILIDAD
+import AgregarProveedor from 'ui/JefeContabilidad/proveedores/agregarProveedor/AgregarProveedor';
+import ListarProveedores from 'ui/JefeContabilidad/proveedores/listarProveedor/ListarProveedores';
+import EditarProveedor from 'ui/JefeContabilidad/proveedores/editarProveedor/EditarProveedor';
+
 
 // Utilities
 import ProtectedRouteHome from 'utilities/ProtectedRoutes/ProtectedRouteHome';
@@ -108,15 +113,21 @@ function AppContent() {
 
       {/* RUTAS JEFE CONTABILIDAD */}
       <Route
-        path="/jefe-contabilidad"
+        path="/jefe_contabilidad"
         element={
           <ProtectedRouteJefeContabilidad element={<SidebarLayout />} />
         }
       >
-        {/* Ruta Home (cuando solo pones /usuario) */}
+        {/* Ruta Home (cuando solo pones /jefe_contabilidad) */}
         <Route index element={<Home />} />
 
-        {/* Aquí agregas más módulos */}
+      {/*  RUTAS CRUD PROVEEEDORES */}
+        {/* Ruta Agregar Proveedor */}
+        <Route path="agregar-proveedor" element={<AgregarProveedor />} />
+        {/* Ruta Listar Proveedor */}
+        <Route path="listar-proveedores" element={<ListarProveedores />} />
+        {/* Ruta Editar Proveedor */}
+        <Route path="editar-proveedor/:id" element={<EditarProveedor />} />
 
       </Route>
 

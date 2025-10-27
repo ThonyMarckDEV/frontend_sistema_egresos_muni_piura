@@ -35,10 +35,10 @@ const menus = {
     jefe_contabilidad: [
         { section: 'Dashboard', link: '/asesor/dashboard' },
         {
-            section:'Evaluaciones',
+            section:'Proveedores',
             subs:[
-                {name:'Evaluar Cliente' , link:'/asesor/evaluacion-cliente'},
-                {name:'Evaluaciones Enviadas' ,  link: '/asesor/evaluaciones-enviadas'}
+                {name:'Agregar Proveedor' , link:'/jefe_contabilidad/agregar-proveedor'},
+                {name:'Listar Proveedores' ,  link: '/jefe_contabilidad/listar-proveedores'}
             ]
         },
     ],
