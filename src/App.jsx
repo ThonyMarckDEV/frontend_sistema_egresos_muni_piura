@@ -35,6 +35,10 @@ import AgregarCategoria from 'ui/Contador/categorias/agregarCategoria/AgregarCat
 import ListarCategorias from 'ui/Contador/categorias/listarCategorias/ListarCategorias';
 import EditarCategoria from 'ui/Contador/categorias/editarCategoria/EditarCategoria';
 
+import AgregarEgreso from 'ui/Contador/egresos/categorias/agregarEgreso/AgregarEgreso';
+import ListarEgresos from 'ui/Contador/egresos/categorias/listarEgresos/ListarEgresos';
+import EditarEgreso from 'ui/Contador/egresos/categorias/editarEgreso/EditarEgreso';
+
 // UIS JEFE CONTABILIDAD
 import AgregarProveedor from 'ui/JefeContabilidad/proveedores/agregarProveedor/AgregarProveedor';
 import ListarProveedores from 'ui/JefeContabilidad/proveedores/listarProveedor/ListarProveedores';
@@ -107,6 +111,15 @@ function AppContent() {
         <Route path="listar-categorias" element={<ListarCategorias />} />
         {/* Ruta Editar Categoría */}
         <Route path="editar-categoria/:id" element={<EditarCategoria />} />
+
+      {/*  RUTAS CRUD EGRESOS */}
+        {/* Ruta Agregar Egreso */}
+        <Route path="agregar-egreso" element={<AgregarEgreso />} />
+        {/* Ruta Listar Egresos */}
+        <Route path="listar-egreso" element={<ListarEgresos />} />
+        {/* Ruta Editar Egreso */}
+        <Route path="editar-egreso/:id" element={<EditarEgreso />} />
+
 
       </Route>
 

@@ -31,6 +31,13 @@ const menus = {
                 { name: 'Listar Categorías', link: '/contador/listar-categorias' },
             ],
         },
+        {
+            section: 'Egresos',
+            subs: [
+                { name: 'Agregar Egreso', link: '/contador/agregar-egreso' },
+                { name: 'Listar Egresos', link: '/contador/listar-egreso' },
+            ],
+        },
     ],
     jefe_contabilidad: [
         { section: 'Dashboard', link: '/asesor/dashboard' },
