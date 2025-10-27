@@ -35,9 +35,9 @@ import AgregarCategoria from 'ui/Contador/categorias/agregarCategoria/AgregarCat
 import ListarCategorias from 'ui/Contador/categorias/listarCategorias/ListarCategorias';
 import EditarCategoria from 'ui/Contador/categorias/editarCategoria/EditarCategoria';
 
-import AgregarEgreso from 'ui/Contador/egresos/categorias/agregarEgreso/AgregarEgreso';
-import ListarEgresos from 'ui/Contador/egresos/categorias/listarEgresos/ListarEgresos';
-import EditarEgreso from 'ui/Contador/egresos/categorias/editarEgreso/EditarEgreso';
+import AgregarEgreso from 'ui/Contador/egresos/agregarEgreso/AgregarEgreso';
+import ListarEgresos from 'ui/Contador/egresos/listarEgresos/ListarEgresos';
+import EditarEgreso from 'ui/Contador/egresos/editarEgreso/EditarEgreso';
 
 // UIS JEFE CONTABILIDAD
 import AgregarProveedor from 'ui/JefeContabilidad/proveedores/agregarProveedor/AgregarProveedor';
