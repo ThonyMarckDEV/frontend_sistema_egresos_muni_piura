@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-// 1. Importar el servicio de Cuenta por Pagar
-import { getCuentaPorPagarById } from 'services/cuentaPorPagarService'; // Asegúrate que esta función exista
+import { getCuentaPorPagarById } from 'services/cuentaPorPagarService';
 
-// Componente interno para mostrar los campos
+// Componente InfoField (sin cambios)
 const InfoField = ({ label, value }) => (
   <div className="mb-4">
     <label className="block text-sm font-medium text-gray-500 mb-1">
@@ -17,7 +16,7 @@ const InfoField = ({ label, value }) => (
   </div>
 );
 
-// Badge de estado (puedes reusar el de la lista si lo exportas)
+// Componente EstadoCuentaBadge (sin cambios)
 const EstadoCuentaBadge = ({ estado }) => {
   let classes = 'bg-gray-100 text-gray-800'; 
   let text = estado ? estado.charAt(0).toUpperCase() + estado.slice(1) : 'Desconocido';
@@ -31,33 +30,26 @@ const EstadoCuentaBadge = ({ estado }) => {
   return <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${classes}`}>{text}</span>;
 };
 
-
-// 2. Nombre del componente y prop
 const ModalInfoCuentaPorPagar = ({ isOpen, onClose, cuentaId }) => {
-  // 3. Estado adaptado
   const [cuentaData, setCuentaData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // 4. Usar cuentaId
     if (isOpen && cuentaId) {
       const fetchData = async () => {
         setLoading(true);
         setError(null);
         setCuentaData(null); 
         try {
-          // 6. Llamar al servicio correcto
           const response = await getCuentaPorPagarById(cuentaId);
-          
-          // El controller debe traer las relaciones 'egreso.proveedor', 'egreso.categoria'
           const data = response.data || response;
 
-          if (!data || !data.egreso) { // Verifica que exista el egreso asociado
+          if (!data || !data.egreso) {
             throw new Error("La estructura de datos recibida no es la esperada.");
           }
           
-          setCuentaData(data); // 7. Guardar datos
+          setCuentaData(data); 
 
         } catch (err) {
           console.error("Error al cargar datos de la cuenta por pagar:", err);
@@ -69,13 +61,12 @@ const ModalInfoCuentaPorPagar = ({ isOpen, onClose, cuentaId }) => {
       
       fetchData();
     }
-  }, [isOpen, cuentaId]); // 9. Dependencia actualizada
+  }, [isOpen, cuentaId]); 
 
   if (!isOpen) {
     return null;
   }
 
-  // Cálculos para mostrar saldos
   const montoTotal = parseFloat(cuentaData?.egreso?.monto || 0);
   const montoPagado = parseFloat(cuentaData?.monto_pagado || 0);
   const saldoPendiente = montoTotal - montoPagado;
@@ -89,9 +80,9 @@ const ModalInfoCuentaPorPagar = ({ isOpen, onClose, cuentaId }) => {
         className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 m-4"
         onClick={(e) => e.stopPropagation()} 
       >
+        {/* Encabezado (sin cambios) */}
         <div className="flex justify-between items-center border-b pb-3 mb-4">
           <h3 className="text-xl font-semibold text-gray-800">
-            {/* 10. Título adaptado */}
             Información de la Cuenta por Pagar
           </h3>
           <button 
@@ -103,39 +94,60 @@ const ModalInfoCuentaPorPagar = ({ isOpen, onClose, cuentaId }) => {
           </button>
         </div>
 
+        {/* Cuerpo del Modal */}
         <div>
           {loading && <div className="text-center p-4 text-gray-500">Cargando...</div>}
           {error && <div className="p-3 bg-red-50 text-red-800 rounded-md border border-red-200">{error}</div>}
           
-          {/* 11. Usar cuentaData */}
           {cuentaData && (
             <div className="max-h-[70vh] overflow-y-auto pr-2">
+              {/* Detalles de la Cuenta (sección principal) */}
               <h4 className="text-lg font-medium mb-3 text-gray-700">Detalles de la Cuenta</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
-                {/* Campos adaptados para Cuenta por Pagar */}
                 <InfoField label="Proveedor" value={cuentaData.egreso?.proveedor?.nombre || 'N/A'} />
-                 <InfoField label="Categoría Egreso" value={cuentaData.egreso?.categoria?.nombre || 'N/A'} />
+                <InfoField label="Categoría Egreso" value={cuentaData.egreso?.categoria?.nombre || 'N/A'} />
                 <InfoField label="Monto Total" value={`S/ ${montoTotal.toFixed(2)}`} />
                 <InfoField label="Monto Pagado" value={`S/ ${montoPagado.toFixed(2)}`} />
                 <InfoField label="Saldo Pendiente" value={`S/ ${saldoPendiente.toFixed(2)}`} />
-                 <InfoField 
+                <InfoField 
                   label="Fecha de Vencimiento" 
                   value={new Date(cuentaData.fecha_vencimiento + 'T00:00:00').toLocaleDateString()} 
                 />
-                 {/* Mostrar el estado con el badge */}
-                 <div className="mb-4 md:col-span-2"> 
-                    <label className="block text-sm font-medium text-gray-500 mb-1">Estado</label>
-                    <EstadoCuentaBadge estado={cuentaData.estado} />
-                 </div>
+                <div className="mb-4 md:col-span-2"> 
+                  <label className="block text-sm font-medium text-gray-500 mb-1">Estado</label>
+                  <EstadoCuentaBadge estado={cuentaData.estado} />
+                </div>
               </div>
-              {/* Descripción del Egreso original */}
               <div className="mt-2">
                 <InfoField label="Descripción Egreso Original" value={cuentaData.egreso?.descripcion} />
               </div>
+
+              {/* --- NUEVA SECCIÓN: DETALLES DEL PAGO --- */}
+              {/* Solo se muestra si el estado es 'pagado' */}
+              {cuentaData.estado === 'pagado' && (
+                <>
+                  <h4 className="text-lg font-medium mt-6 mb-3 text-gray-700 border-t pt-4">Detalles del Pago</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+                    <InfoField label="Método de Pago" value={cuentaData.metodo_pago || 'N/A'} />
+                    {/* Solo muestra número de operación si no es 'Efectivo' y existe */}
+                    {cuentaData.metodo_pago !== 'Efectivo' && (
+                      <InfoField label="Número de Operación" value={cuentaData.numero_operacion || 'N/A'} />
+                    )}
+                     <InfoField 
+                      label="Fecha de Pago" 
+                      // Usa updated_at como fecha de pago (asumiendo que se actualiza al pagar)
+                      value={new Date(cuentaData.updated_at).toLocaleString('es-ES')} 
+                    />
+                  </div>
+                </>
+              )}
+              {/* --- FIN NUEVA SECCIÓN --- */}
+
             </div>
           )}
         </div>
 
+        {/* Pie del Modal (sin cambios) */}
         <div className="border-t pt-4 mt-4 text-right">
           <button
             onClick={onClose}
