@@ -1,75 +1,66 @@
 import React, { useState, useEffect } from 'react';
-// 1. Importar el servicio de PROVEEDOR
 import { getAllProveedores } from 'services/proveedorService'; 
 
 const ProveedorSelect = ({ value, onChange, errors, disabled }) => {
-    
-    // 2. Nombres de estado cambiados
     const [allProveedores, setAllProveedores] = useState([]); 
     const [filteredProveedores, setFilteredProveedores] = useState([]);
-    
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState(null);
-    // 3. Error adaptado
     const error = errors.id_Proveedor; 
 
-    // Carga TODOS los proveedores UNA SOLA VEZ al inicio
     useEffect(() => {
-        // 4. Nombre de función cambiado
         const fetchAllProveedores = async () => {
             try {
-                // 5. Llamada al servicio de proveedor
                 const response = await getAllProveedores(); 
-                
                 const dataArray = Array.isArray(response) ? response : (response.data || []);
-                
                 setAllProveedores(dataArray);
                 setFilteredProveedores(dataArray);
-
             } catch (err) {
                 console.error("Error al cargar proveedores:", err);
-                setErrorMsg('Error al cargar la lista de proveedores.'); // 6. Mensaje cambiado
+                setErrorMsg('Error al cargar la lista de proveedores.');
             } finally {
                 setLoading(false);
             }
         };
         fetchAllProveedores();
-    }, []); // Array vacío, solo se ejecuta 1 vez
+    }, []); 
 
-    
-    // 7. --- LÓGICA DE FILTRO MODIFICADA ---
-    // Se ejecuta CADA VEZ que el usuario escribe
     useEffect(() => {
         if (!searchTerm) {
             setFilteredProveedores(allProveedores);
         } else {
             const searchLower = searchTerm.toLowerCase();
-
             const filtrados = allProveedores.filter(proveedor =>
-                // Busca por nombre
                 proveedor.nombre.toLowerCase().includes(searchLower) ||
-                // Busca por RUC (si existe)
                 (proveedor.ruc && proveedor.ruc.includes(searchTerm)) ||
-                // Busca por DNI (si existe)
                 (proveedor.dni && proveedor.dni.includes(searchTerm))
             );
             setFilteredProveedores(filtrados);
         }
-    }, [searchTerm, allProveedores]); // Se re-ejecuta si cambia el texto o la lista original
+    }, [searchTerm, allProveedores]); 
 
-    // El handler para el campo de búsqueda (se queda igual)
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
     };
 
-    // Estados de Carga y Error (se quedan igual, solo cambia el texto)
     if (loading) {
         return (
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Proveedor</label>
-                <div className="p-2 border border-gray-300 bg-gray-100 rounded-md text-gray-500">
-                    Cargando proveedores...
+            <div className="relative">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Proveedor</label>
+                <div className="relative">
+                    <input
+                        type="text"
+                        placeholder="Cargando proveedores..."
+                        disabled
+                        className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:cursor-not-allowed"
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <svg className="h-5 w-5 text-gray-400 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
                 </div>
             </div>
         );
@@ -77,68 +68,63 @@ const ProveedorSelect = ({ value, onChange, errors, disabled }) => {
     
     if (errorMsg) {
         return (
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Proveedor</label>
-                <p className="text-red-500 text-sm mt-1">{errorMsg}</p>
+            <div className="relative">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Proveedor</label>
+                <div className="p-3 border border-red-300 bg-red-50 rounded-lg text-red-600 text-sm">
+                    {errorMsg}
+                </div>
             </div>
         );
     }
 
-    // Renderizado del componente
     return (
-        <div>
-            {/* 8. Labels adaptados a Proveedor */}
-            <label htmlFor="id_Proveedor" className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="relative">
+            <label htmlFor="id_Proveedor" className="block text-sm font-semibold text-gray-700 mb-2">
                 Proveedor
             </label>
             
-            {/* CAMPO DE TEXTO PARA BUSCAR (igual) */}
             <input
                 type="text"
-                placeholder="Filtrar por Nombre, RUC o DNI..."
+                placeholder="Filtrar por nombre, RUC o DNI..."
                 value={searchTerm}
                 onChange={handleSearchChange}
                 disabled={disabled || loading}
-                className="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100 mb-2"
+                className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed mb-3 transition-colors duration-200"
             />
             
-            {/* El SELECT adaptado */}
             <select
                 id="id_Proveedor"
                 name="id_Proveedor"
                 value={value}
                 onChange={onChange}
-                className={`w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100 ${error ? 'border-red-500' : ''}`}
+                className={`w-full px-4 py-3 border-2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed ${
+                    error 
+                        ? 'border-red-500 bg-red-50 text-red-900' 
+                        : 'border-gray-300 hover:border-gray-400 focus:border-blue-500'
+                }`}
                 disabled={disabled}
             >
-                <option value="" disabled>Seleccione Proveedor</option>
-                
-                {/* 9. --- LÓGICA DE DISPLAY MODIFICADA --- */}
-                {/* Mapea sobre los proveedores filtrados */}
+                <option value="" disabled>Seleccione un proveedor</option>
                 {filteredProveedores.map((proveedor) => {
-                    // Crea el texto para la opción
                     let label = proveedor.nombre;
                     if (proveedor.ruc) {
                         label += ` (RUC: ${proveedor.ruc})`;
                     } else if (proveedor.dni) {
                         label += ` (DNI: ${proveedor.dni})`;
                     }
-
                     return (
                         <option key={proveedor.id} value={proveedor.id}>
                             {label}
                         </option>
                     );
                 })}
-
-                {/* Mensaje si el filtro no encuentra nada (igual) */}
                 {filteredProveedores.length === 0 && searchTerm && (
-                    <option value="" disabled>
+                    <option value="" disabled className="text-gray-500">
                         No se encontraron coincidencias para "{searchTerm}"
                     </option>
                 )}
             </select>
-            {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+            {error && <p className="text-red-600 text-xs mt-1 font-medium">{error}</p>}
         </div>
     );
 };

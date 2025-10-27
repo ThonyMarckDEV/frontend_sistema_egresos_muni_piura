@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-// 1. Importa la *nueva* función que trae TODAS
 import { getAllCategorias } from 'services/categoriaService'; 
 
 const CategoriaSelect = ({ value, onChange, errors, disabled }) => {
-    
     const [allCategorias, setAllCategorias] = useState([]); 
     const [filteredCategorias, setFilteredCategorias] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -11,24 +9,13 @@ const CategoriaSelect = ({ value, onChange, errors, disabled }) => {
     const [errorMsg, setErrorMsg] = useState(null);
     const error = errors.id_Categoria; 
 
-    // 3. Carga TODAS las categorías UNA SOLA VEZ al inicio
     useEffect(() => {
         const fetchAllCategorias = async () => {
             try {
-                // --- INICIO DE LA CORRECCIÓN ---
-
-                // 'response' es el objeto que viene del service (ej: { data: [...] })
                 const response = await getAllCategorias(); 
-                
-                // Si la respuesta es un array, úsalo. Si es un objeto, busca 'response.data'.
-                // Si no es nada, usa un array vacío [].
                 const dataArray = Array.isArray(response) ? response : (response.data || []);
-                
                 setAllCategorias(dataArray);
                 setFilteredCategorias(dataArray);
-
-                // --- FIN DE LA CORRECCIÓN ---
-
             } catch (err) {
                 console.error("Error al cargar categorías:", err);
                 setErrorMsg('Error al cargar la lista de categorías.');
@@ -37,15 +24,12 @@ const CategoriaSelect = ({ value, onChange, errors, disabled }) => {
             }
         };
         fetchAllCategorias();
-    }, []); // Array vacío, solo se ejecuta 1 vez
+    }, []); 
 
-    
-    // 4. Este efecto se ejecuta CADA VEZ que el usuario escribe
     useEffect(() => {
         if (!searchTerm) {
             setFilteredCategorias(allCategorias);
         } else {
-            // Esta parte ya estaba bien, porque 'allCategorias' AHORA sí es un array
             const filtradas = allCategorias.filter(categoria =>
                 categoria.nombre.toLowerCase().includes(searchTerm.toLowerCase())
             );
@@ -53,18 +37,27 @@ const CategoriaSelect = ({ value, onChange, errors, disabled }) => {
         }
     }, [searchTerm, allCategorias]); 
 
-    // 5. El handler para el campo de búsqueda
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
     };
 
-
     if (loading) {
         return (
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
-                <div className="p-2 border border-gray-300 bg-gray-100 rounded-md text-gray-500">
-                    Cargando categorías...
+            <div className="relative">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
+                <div className="relative">
+                    <input
+                        type="text"
+                        placeholder="Cargando categorías..."
+                        disabled
+                        className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:cursor-not-allowed"
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <svg className="h-5 w-5 text-gray-400 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
                 </div>
             </div>
         );
@@ -72,55 +65,55 @@ const CategoriaSelect = ({ value, onChange, errors, disabled }) => {
     
     if (errorMsg) {
         return (
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
-                <p className="text-red-500 text-sm mt-1">{errorMsg}</p>
+            <div className="relative">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
+                <div className="p-3 border border-red-300 bg-red-50 rounded-lg text-red-600 text-sm">
+                    {errorMsg}
+                </div>
             </div>
         );
     }
 
     return (
-        <div>
-            <label htmlFor="id_Categoria" className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="relative">
+            <label htmlFor="id_Categoria" className="block text-sm font-semibold text-gray-700 mb-2">
                 Categoría
             </label>
             
-            {/* 6. CAMPO DE TEXTO PARA BUSCAR */}
             <input
                 type="text"
-                placeholder="Escribe para filtrar..."
+                placeholder="Escribe para filtrar categorías..."
                 value={searchTerm}
                 onChange={handleSearchChange}
                 disabled={disabled || loading}
-                className="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100 mb-2"
+                className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed mb-3 transition-colors duration-200"
             />
             
-            {/* 7. El SELECT original (Esta línea ya no dará error) */}
             <select
                 id="id_Categoria"
                 name="id_Categoria"
                 value={value}
                 onChange={onChange}
-                className={`w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100 ${error ? 'border-red-500' : ''}`}
+                className={`w-full px-4 py-3 border-2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed ${
+                    error 
+                        ? 'border-red-500 bg-red-50 text-red-900' 
+                        : 'border-gray-300 hover:border-gray-400 focus:border-blue-500'
+                }`}
                 disabled={disabled}
             >
-                <option value="" disabled>Seleccione Categoría</option>
-                
-                {/* Ahora 'filteredCategorias' es un array y .map() funciona */}
+                <option value="" disabled>Seleccione una categoría</option>
                 {filteredCategorias.map((categoria) => (
                     <option key={categoria.id} value={categoria.id}>
                         {categoria.nombre}
                     </option>
                 ))}
-
-                {/* Mensaje si el filtro no encuentra nada */}
                 {filteredCategorias.length === 0 && searchTerm && (
-                    <option value="" disabled>
+                    <option value="" disabled className="text-gray-500">
                         No se encontraron coincidencias para "{searchTerm}"
                     </option>
                 )}
             </select>
-            {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+            {error && <p className="text-red-600 text-xs mt-1 font-medium">{error}</p>}
         </div>
     );
 };
