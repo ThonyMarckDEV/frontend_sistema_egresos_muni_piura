@@ -105,7 +105,7 @@ export const RegistrarCuentaPorPagar = () => {
       });
       setFormData(initialState);
       setTimeout(() => {
-          navigate('/contador/egresos'); 
+          navigate('/contador/listar-cuentas-por-pagar'); 
       }, 2000);
     } catch (err) {
       console.error("Error recibido:", err);

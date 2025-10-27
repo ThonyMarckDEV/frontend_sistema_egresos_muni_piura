@@ -32,3 +32,21 @@ export const getCuentaPorPagarById = async (id) => {
   });
   return handleResponse(response);
 };
+
+/**
+ * Marca una cuenta por pagar como pagada.
+ * @param {string|number} id - El ID de la cuenta por pagar.
+ * @param {object} paymentData - Objeto con { metodo_pago, numero_operacion }
+ */
+export const marcarCuentaComoPagada = async (id, paymentData) => {
+  // Ruta: /api/cuenta-por-pagar/{id}/pagar
+  const response = await fetchWithAuth(`${API_BASE_URL}/api/cuenta-por-pagar/${id}/pagar`, {
+    method: 'PUT', // o PATCH si tu API lo prefiere
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify(paymentData)
+  });
+  return handleResponse(response);
+};
