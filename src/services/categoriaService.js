@@ -35,6 +35,22 @@ export const getCategorias = async (page = 1) => {
 };
 
 /**
+ * NUEVA FUNCIÓN: Obtiene la lista COMPLETA de categorías.
+ * Llama a la ruta /api/categorias/all
+ */
+export const getAllCategorias = async () => {
+  const response = await fetchWithAuth(`${API_BASE_URL}/api/categorias/all`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+  
+  // Asumo que handleResponse devuelve el array
+  return handleResponse(response);
+};
+
+/**
  * Obtiene los datos de una categoría específica por su ID.
  * @param {string|number} id - El ID de la categoría.
  */
