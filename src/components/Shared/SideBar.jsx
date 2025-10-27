@@ -38,6 +38,12 @@ const menus = {
                 { name: 'Listar Egresos', link: '/contador/listar-egreso' },
             ],
         },
+        {
+            section: 'Cuentas por Pagar',
+            subs: [
+                { name: 'Listar Cuentas por Pagar', link: '/contador/listar-cuentas-por-pagar' },
+            ],
+        },
     ],
     jefe_contabilidad: [
         { section: 'Dashboard', link: '/asesor/dashboard' },

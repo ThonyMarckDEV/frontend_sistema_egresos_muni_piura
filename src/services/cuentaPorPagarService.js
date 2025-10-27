@@ -19,8 +19,6 @@ export const createCuentaPorPagar = async (cuentaData) => {
   return handleResponse(response);
 };
 
-// --- Funciones Opcionales ---
-/*
 export const getCuentasPorPagar = async (page = 1) => {
   const response = await fetchWithAuth(`${API_BASE_URL}/api/cuentas-por-pagar?page=${page}`, {
     method: 'GET', headers: { 'Accept': 'application/json' }
@@ -34,4 +32,3 @@ export const getCuentaPorPagarById = async (id) => {
   });
   return handleResponse(response);
 };
-*/
