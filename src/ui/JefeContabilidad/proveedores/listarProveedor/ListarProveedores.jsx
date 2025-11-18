@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-// 1. Importar servicios de proveedor
+// Importar servicios de proveedor
 import { getProveedores } from 'services/proveedorService'; 
 import Pagination from 'components/Shared/Pagination';
 import AlertMessage from 'components/Shared/Errors/AlertMessage';
 
-// --- NUEVA IMPORTACIÓN ---
-// Importa el modal que acabamos de crear (ajusta la ruta si es necesario)
+// --- IMPORTACIONES DE MODAL Y REPORTE ---
 import ModalInfoProveedor from '../components/modals/ModalInfoProveedor'; 
+import ReportButton from 'components/Shared/ReportButton';
 
 // El componente EstadoBadge es reutilizable
 const EstadoBadge = ({ estado }) => {
@@ -22,9 +22,9 @@ const EstadoBadge = ({ estado }) => {
   );
 };
 
-// 2. Nombre del componente
+// Nombre del componente
 export const ListarProveedores = () => {
-  // 3. Estado adaptado
+  // Estado adaptado
   const [proveedores, setProveedores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,18 +36,20 @@ export const ListarProveedores = () => {
 
   const [alertInfo, setAlertInfo] = useState({ type: null, message: null, details: [] });
 
-  // --- NUEVOS ESTADOS PARA EL MODAL ---
+  // --- ESTADOS PARA EL MODAL ---
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProveedorId, setSelectedProveedorId] = useState(null);
 
+  // Efectos
   useEffect(() => {
-    // 4. Nombre de función adaptado
+    // Nombre de función adaptado
     const fetchProveedores = async (page) => {
       setLoading(true);
       setError(null);
-      setAlertInfo({ type: null, message: null, details: [] }); 
+      // No limpiar alerta al paginar
+      // setAlertInfo({ type: null, message: null, details: [] }); 
       try {
-        // 5. Llamar al servicio correcto
+        // Llamar al servicio correcto
         const response = await getProveedores(page);
         
         if (response.current_page !== undefined) {
@@ -75,11 +77,12 @@ export const ListarProveedores = () => {
     fetchProveedores(pagination.currentPage); 
   }, [pagination.currentPage]);
 
+  // Handlers de paginación
   const handlePageChange = (page) => {
     setPagination(prev => ({ ...prev, currentPage: page }));
   };
 
-  // --- NUEVOS HANDLERS PARA EL MODAL ---
+  // --- HANDLERS PARA EL MODAL ---
   const handleOpenModal = (id) => {
     setSelectedProveedorId(id);
     setIsModalOpen(true);
@@ -90,6 +93,7 @@ export const ListarProveedores = () => {
     setIsModalOpen(false);
   };
 
+  // Render condicional para loading y error
   if (loading) {
     return <div className="text-center p-8 text-gray-500">Cargando proveedores...</div>;
   }
@@ -98,11 +102,38 @@ export const ListarProveedores = () => {
     return <div className="p-4 bg-red-50 text-red-800 rounded-md border border-red-200">{error}</div>;
   }
 
+  // --- LÓGICA PARA PREPARAR DATOS DEL REPORTE ---
+  // Define las columnas para el PDF
+  const reportColumns = [
+    { header: 'Nombre / Razón Social', dataKey: 'nombre' },
+    { header: 'Documento', dataKey: 'documento' },
+    { header: 'Estado', dataKey: 'estado' },
+  ];
+
+  // Mapea los datos de 'proveedores' al formato requerido por el PDF
+  const reportData = proveedores.map((proveedor) => ({
+    nombre: proveedor.nombre,
+    documento: proveedor.ruc ? `RUC: ${proveedor.ruc}` : (proveedor.dni ? `DNI: ${proveedor.dni}` : 'N/A'),
+    estado: proveedor.estado === 1 ? 'Activo' : 'Inactivo',
+  }));
+  // --- FIN LÓGICA REPORTE ---
+
   return (
     <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-4">
-        Lista de Proveedores
-      </h2>
+
+      {/* --- SECCIÓN DE TÍTULO MODIFICADA CON BOTÓN --- */}
+      <div className="flex justify-between items-center mb-6 border-b pb-4">
+        <h2 className="text-2xl font-semibold text-gray-800">
+          Lista de Proveedores
+        </h2>
+
+        <ReportButton
+          title="Reporte de Proveedores"
+          columns={reportColumns}
+          data={reportData}
+          cookieUsername="username" // Opcional: cambia si tu cookie se llama diferente
+        />
+      </div>
       
       <AlertMessage
         type={alertInfo.type}
@@ -115,7 +146,7 @@ export const ListarProveedores = () => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              {/* 7. Cabeceras adaptadas para Proveedor */}
+              {/* Cabeceras adaptadas para Proveedor */}
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre / Razón Social</th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Documento</th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
@@ -123,11 +154,10 @@ export const ListarProveedores = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {/* 8. Mapear sobre 'proveedores' */}
+            {/* Mapear sobre 'proveedores' */}
             {proveedores.length > 0 ? (
               proveedores.map((proveedor) => (
                 <tr key={proveedor.id}>
-                  
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {proveedor.nombre}
                   </td>
@@ -154,12 +184,11 @@ export const ListarProveedores = () => {
                       Editar
                     </Link>
                   </td>
-
                 </tr>
               ))
             ) : (
               <tr>
-                {/* 10. Colspan adaptado (4 columnas) */}
+                {/* Colspan adaptado (4 columnas) */}
                 <td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-500">
                   No se encontraron proveedores.
                 </td>
