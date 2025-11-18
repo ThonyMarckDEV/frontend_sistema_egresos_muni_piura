@@ -46,7 +46,6 @@ const menus = {
         },
     ],
     jefe_contabilidad: [
-        { section: 'Dashboard', link: '/asesor/dashboard' },
         {
             section:'Proveedores',
             subs:[

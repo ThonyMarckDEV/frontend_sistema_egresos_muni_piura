@@ -31,6 +31,8 @@ import ListarJefesContabilidad from 'ui/Administrador/jefesContabilidad/listarJe
 import EditarJefeContabilidad from 'ui/Administrador/jefesContabilidad/editarJefeContabilidad/EditarJefeContabilidad';
 
 // UIS CONTADOR
+import DashboardContador from 'ui/Contador/dashboard/Dashboard';
+
 import AgregarCategoria from 'ui/Contador/categorias/agregarCategoria/AgregarCategoria';
 import ListarCategorias from 'ui/Contador/categorias/listarCategorias/ListarCategorias';
 import EditarCategoria from 'ui/Contador/categorias/editarCategoria/EditarCategoria';
@@ -105,7 +107,7 @@ function AppContent() {
         }
       >
         {/* Ruta Home (cuando solo pones /usuario) */}
-        <Route index element={<Home />} />
+        <Route index element={<DashboardContador />} />
 
       {/*  RUTAS CRUD CATEGORIAS */}
         {/* Ruta Agregar Categoría */}
