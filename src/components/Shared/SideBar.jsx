@@ -25,6 +25,9 @@ const menus = {
     ],
     contador: [
         {
+            section: 'Home', link: '/contador'
+        },
+        {
             section: 'Categorías',
             subs: [
                 { name: 'Agregar Categoría', link: '/contador/agregar-categoria' },
