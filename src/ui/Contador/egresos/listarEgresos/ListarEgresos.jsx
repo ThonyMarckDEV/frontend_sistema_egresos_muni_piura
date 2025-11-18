@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { getEgresos } from 'services/egresoService';
 import Pagination from 'components/Shared/Pagination';
 import AlertMessage from 'components/Shared/Errors/AlertMessage';
-import ModalInfoEgreso from '../components/modals/ModalInfoEgreso'; // Ajusta la ruta si es necesario
+import ModalInfoEgreso from '../components/modals/ModalInfoEgreso';
+import ReportButton from 'components/Shared/ReportButton';
 
 export const ListarEgresos = () => {
   const [egresos, setEgresos] = useState([]);
@@ -72,11 +73,40 @@ export const ListarEgresos = () => {
     return <div className="p-4 bg-red-50 text-red-800 rounded-md border border-red-200">{error}</div>;
   }
 
+  // 'header' es el título en el PDF, 'dataKey' es la clave en el objeto de datos.
+  const reportColumns = [
+    { header: 'ID', dataKey: 'id' },
+    { header: 'Monto', dataKey: 'monto' },
+    { header: 'Categoría', dataKey: 'categoria' },
+    { header: 'Proveedor', dataKey: 'proveedor' },
+    { header: 'Fecha', dataKey: 'fecha' },
+  ];
+
+  // Mapea tus datos 'egresos' al formato exacto que necesita el PDF.
+  // Esto es importante para formatear moneda, fechas y manejar objetos anidados.
+  const reportData = egresos.map((egreso) => ({
+    id: egreso.id,
+    monto: `S/ ${parseFloat(egreso.monto).toFixed(2)}`,
+    categoria: egreso.categoria ? egreso.categoria.nombre : 'N/A',
+    proveedor: egreso.proveedor ? egreso.proveedor.nombre : 'N/A',
+    fecha: new Date(egreso.created_at).toLocaleDateString('es-PE'),
+  }));
+
   return (
     <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-4">
-        Lista de Egresos
-      </h2>
+
+      <div className="flex justify-between items-center mb-6 border-b pb-4">
+        <h2 className="text-2xl font-semibold text-gray-800">
+          Lista de Egresos
+        </h2>
+
+      <ReportButton
+          title="Reporte de Egresos"
+          columns={reportColumns}
+          data={reportData}
+          cookieUsername="username" // Opcional: cambia si tu cookie se llama diferente
+        />
+      </div>
 
       <AlertMessage
         type={alertInfo.type}
