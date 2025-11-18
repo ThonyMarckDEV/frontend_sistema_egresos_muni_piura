@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { getCuentasPorPagar } from 'services/cuentaPorPagarService'; 
 import Pagination from 'components/Shared/Pagination';
 import AlertMessage from 'components/Shared/Errors/AlertMessage';
 import ModalInfoCuentaPorPagar from '../components/modals/ModalInfoCuentasPorPagar'; 
-// --- NUEVA IMPORTACIÓN ---
 import PaymentModal from '../components/modals/PaymentModal';
 
-// --- NUEVO COMPONENTE: EstadoCuentaBadge ---
-// Badge específico para el estado de la cuenta por pagar
+// --- IMPORTACIÓN DEL BOTÓN DE REPORTE ---
+import ReportButton from 'components/Shared/ReportButton';
+
+// --- COMPONENTE: EstadoCuentaBadge ---
 const EstadoCuentaBadge = ({ estado }) => {
   let classes = 'bg-gray-100 text-gray-800'; // Default
   let text = estado.charAt(0).toUpperCase() + estado.slice(1); // Capitalize
@@ -20,9 +20,9 @@ const EstadoCuentaBadge = ({ estado }) => {
     case 'pagado':
       classes = 'bg-green-100 text-green-800';
       break;
-    case 'vencido': // Podrías añadir lógica para calcular esto
+    case 'vencido': 
       classes = 'bg-red-100 text-red-800';
-      text = 'Vencido'; // Opcional, si el backend no lo calcula
+      text = 'Vencido';
       break;
     default:
       break;
@@ -35,8 +35,8 @@ const EstadoCuentaBadge = ({ estado }) => {
   );
 };
 
-
 export const ListarCuentasPorPagar = () => {
+  // Estados principales
   const [cuentas, setCuentas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -47,21 +47,18 @@ export const ListarCuentasPorPagar = () => {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [selectedCuentaIdInfo, setSelectedCuentaIdInfo] = useState(null);
   
-  // --- NUEVOS ESTADOS PARA MODAL PAGO ---
+  // Estados para Modal Pago
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-  const [selectedCuentaPago, setSelectedCuentaPago] = useState(null); // Guarda el objeto cuenta completo
+  const [selectedCuentaPago, setSelectedCuentaPago] = useState(null); 
 
-  // Función para recargar la lista
+  // Funciones de carga y recarga
   const reloadCuentas = () => {
-     fetchCuentas(pagination.currentPage); // Llama a la función que ya tenías
+    fetchCuentas(pagination.currentPage);
   };
 
-  // fetchCuentas (se queda igual, solo lo muevo aquí para claridad)
   const fetchCuentas = async (page) => {
     setLoading(true);
     setError(null);
-    // No limpiar alerta aquí si viene de un pago exitoso
-    // setAlertInfo({ type: null, message: null, details: [] }); 
     try {
       const response = await getCuentasPorPagar(page);
       if (response.current_page !== undefined) {
@@ -80,15 +77,17 @@ export const ListarCuentasPorPagar = () => {
     }
   };
 
+  // Efectos
   useEffect(() => {
     fetchCuentas(pagination.currentPage); 
   }, [pagination.currentPage]);
 
+  // Handlers de paginación
   const handlePageChange = (page) => {
     setPagination(prev => ({ ...prev, currentPage: page }));
   };
 
-  // Handlers Modal Info
+  // Handlers de modales
   const handleOpenInfoModal = (id) => {
     setSelectedCuentaIdInfo(id);
     setIsInfoModalOpen(true);
@@ -97,24 +96,20 @@ export const ListarCuentasPorPagar = () => {
     setSelectedCuentaIdInfo(null);
     setIsInfoModalOpen(false);
   };
-
-  // --- NUEVOS HANDLERS MODAL PAGO ---
   const handleOpenPaymentModal = (cuenta) => {
-    setSelectedCuentaPago(cuenta); // Guarda el objeto completo
+    setSelectedCuentaPago(cuenta);
     setIsPaymentModalOpen(true);
   };
   const handleClosePaymentModal = () => {
     setSelectedCuentaPago(null);
     setIsPaymentModalOpen(false);
   };
-  // Callback que se ejecuta cuando el pago es exitoso en el modal
   const handlePaymentSuccess = () => {
-    // Muestra mensaje de éxito (opcional, el modal ya lo muestra)
     setAlertInfo({ type: 'success', message: 'Pago registrado con éxito. Actualizando lista...', details: []});
-    reloadCuentas(); // Recarga la lista
+    reloadCuentas(); 
   };
 
-
+  // Render condicional para loading y error
   if (loading) {
     return <div className="text-center p-8 text-gray-500">Cargando cuentas por pagar...</div>;
   }
@@ -122,11 +117,50 @@ export const ListarCuentasPorPagar = () => {
     return <div className="p-4 bg-red-50 text-red-800 rounded-md border border-red-200">{error}</div>;
   }
 
+  // --- LÓGICA PARA PREPARAR DATOS DEL REPORTE ---
+  // Define las columnas para el PDF
+  const reportColumns = [
+    { header: 'Proveedor', dataKey: 'proveedor' },
+    { header: 'Monto Total', dataKey: 'montoTotal' },
+    { header: 'Monto Pagado', dataKey: 'montoPagado' },
+    { header: 'Saldo Pendiente', dataKey: 'saldoPendiente' },
+    { header: 'Fecha Vencimiento', dataKey: 'fechaVencimiento' },
+    { header: 'Estado', dataKey: 'estado' },
+  ];
+
+  // Mapea los datos de 'cuentas' al formato requerido por el PDF
+  const reportData = cuentas.map((cuenta) => {
+    const montoTotal = parseFloat(cuenta.egreso?.monto || 0);
+    const montoPagado = parseFloat(cuenta.monto_pagado || 0);
+    const saldoPendiente = montoTotal - montoPagado;
+
+    return {
+      proveedor: cuenta.egreso?.proveedor?.nombre || 'N/A',
+      montoTotal: `S/ ${montoTotal.toFixed(2)}`,
+      montoPagado: `S/ ${montoPagado.toFixed(2)}`,
+      saldoPendiente: `S/ ${saldoPendiente.toFixed(2)}`,
+      fechaVencimiento: new Date(cuenta.fecha_vencimiento + 'T00:00:00').toLocaleDateString('es-PE'),
+      estado: cuenta.estado.charAt(0).toUpperCase() + cuenta.estado.slice(1) // Capitalizado
+    };
+  });
+  // --- FIN LÓGICA REPORTE ---
+
   return (
     <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-4">
-        Lista de Cuentas por Pagar
-      </h2>
+      
+      {/* --- SECCIÓN DE TÍTULO CON BOTÓN --- */}
+      <div className="flex justify-between items-center mb-6 border-b pb-4">
+        <h2 className="text-2xl font-semibold text-gray-800">
+          Lista de Cuentas por Pagar
+        </h2>
+
+        <ReportButton
+          title="Reporte de Cuentas por Pagar"
+          columns={reportColumns}
+          data={reportData}
+          cookieUsername="username" // Asegúrate que este es el nombre de tu cookie de usuario
+        />
+      </div>
       
       <AlertMessage
         type={alertInfo.type}
@@ -135,9 +169,9 @@ export const ListarCuentasPorPagar = () => {
         onClose={() => setAlertInfo({ type: null, message: null, details: [] })}
       />
       
+      {/* --- TABLA --- */}
       <div className="overflow-x-auto mt-4">
         <table className="min-w-full divide-y divide-gray-200">
-          {/* thead se queda igual */}
           <thead className="bg-gray-50">
             <tr>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Proveedor</th>
@@ -157,7 +191,6 @@ export const ListarCuentasPorPagar = () => {
 
                 return (
                   <tr key={cuenta.id}>
-                    {/* Columnas de datos se quedan igual */}
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {cuenta.egreso?.proveedor?.nombre || 'N/A'}
                     </td>
@@ -173,21 +206,17 @@ export const ListarCuentasPorPagar = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <EstadoCuentaBadge estado={cuenta.estado} />
                     </td>
-
-                    {/* Acciones Modificadas */}
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
                       <button
-                        onClick={() => handleOpenInfoModal(cuenta.id)} // Llama al modal de Info
+                        onClick={() => handleOpenInfoModal(cuenta.id)} 
                         className="text-blue-600 hover:text-blue-900"
                       >
                         Ver
                       </button>
                       
-                      {/* --- BOTÓN PAGAR MODIFICADO --- */}
-                      {/* Usa un botón que abre el PaymentModal */}
                       {cuenta.estado === 'pendiente' && saldoPendiente > 0 && (
                         <button 
-                          onClick={() => handleOpenPaymentModal(cuenta)} // Pasa el objeto cuenta completo
+                          onClick={() => handleOpenPaymentModal(cuenta)} 
                           className="text-green-600 hover:text-green-900"
                         >
                           Pagar
@@ -208,6 +237,7 @@ export const ListarCuentasPorPagar = () => {
         </table>
       </div>
 
+      {/* --- PAGINACIÓN Y MODALES --- */}
       {cuentas.length > 0 && ( 
         <Pagination
           currentPage={pagination.currentPage}
@@ -216,19 +246,17 @@ export const ListarCuentasPorPagar = () => {
         />
       )}
 
-      {/* Renderizar Modal Info */}
       <ModalInfoCuentaPorPagar
         isOpen={isInfoModalOpen}
         onClose={handleCloseInfoModal}
         cuentaId={selectedCuentaIdInfo}
       />
       
-      {/* --- RENDERIZAR MODAL PAGO --- */}
       <PaymentModal
         isOpen={isPaymentModalOpen}
         onClose={handleClosePaymentModal}
-        cuentaData={selectedCuentaPago} // Pasa el objeto cuenta
-        onPaymentSuccess={handlePaymentSuccess} // Pasa el callback de éxito
+        cuentaData={selectedCuentaPago} 
+        onPaymentSuccess={handlePaymentSuccess} 
       />
 
     </div>

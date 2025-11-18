@@ -3,15 +3,6 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import jwtUtils from 'utilities/Token/jwtUtils';
 
-// --- (Función Helper para Cookies - sin cambios) ---
-const getCookie = (name) => {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-  return null;
-};
-// -------------------------------------
-
 /**
  * Botón reutilizable para generar un reporte en PDF de una tabla.
  * (Props sin cambios)
