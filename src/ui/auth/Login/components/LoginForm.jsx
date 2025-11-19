@@ -8,7 +8,6 @@ const LoginForm = ({
   handleLogin,
   rememberMe,
   setRememberMe,
-  setShowForgotPassword
 }) => {
   return (
     <div className="w-full max-w-md">
@@ -56,15 +55,6 @@ const LoginForm = ({
             <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
               Recordarme
             </label>
-          </div>
-          <div className="text-sm">
-            <button
-              type="button"
-              onClick={() => setShowForgotPassword(true)}
-              className="font-medium text-black hover:text-gray-700"
-            >
-              ¿Olvidaste tu contraseña?
-            </button>
           </div>
         </div>
         <button

@@ -114,13 +114,6 @@ const Login = () => {
              <div className="flex justify-center items-center h-48">
               <LoadingScreen />
             </div>
-          ) : showForgotPassword ? (
-            <ForgotPasswordForm
-              dni={dni}
-              setDni={setDni}
-              handleForgotPassword={handleForgotPassword}
-              setShowForgotPassword={setShowForgotPassword}
-            />
           ) : (
             <LoginForm
               username={username}
