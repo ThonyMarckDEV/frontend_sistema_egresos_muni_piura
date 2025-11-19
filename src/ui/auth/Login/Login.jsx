@@ -8,6 +8,8 @@ import LoginForm from './components/LoginForm';
 import ForgotPasswordForm from './components/ForgotPasswordForm';
 import authService from 'services/authService';
 
+import LogoMunicipalidad from 'assets/img/munipiuralogo.png'; 
+
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -91,13 +93,21 @@ const Login = () => {
       <ToastContainer position="top-right" />
 
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 sm:p-12">
+        {/* === INICIO DE LOS CAMBIOS === */}
         <div className="flex flex-col items-center text-center mb-10">
-          <div className="h-16 w-16 bg-amber-500 rounded-full flex items-center justify-center mb-4">
-            <span className="text-3xl font-bold text-white">T</span>
+          <div className="h-20 w-20 flex items-center justify-center mb-4">
+            {/* Aquí se reemplaza la 'T' por la imagen del logo. Ajusta la clase si es necesario para el tamaño. */}
+            <img 
+              src={LogoMunicipalidad} // Usamos la variable importada
+              alt="Logo Municipalidad de Piura" 
+              className="object-contain h-full w-full"
+            />
           </div>
-          <h1 className="text-2xl font-bold text-slate-800">Front End</h1>
+          {/* Aquí se cambia 'Front End' por 'Municipalidad de Piura' */}
+          <h1 className="text-2xl font-bold text-slate-800">Municipalidad de Piura</h1>
           <p className="text-slate-500 mt-2 text-sm">Acceso seguro a tu plataforma</p>
         </div>
+        {/* === FIN DE LOS CAMBIOS === */}
 
         <div>
           {loading ? (
